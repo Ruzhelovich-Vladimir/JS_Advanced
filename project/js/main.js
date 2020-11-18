@@ -87,6 +87,16 @@ class Basket {
         this.goods = []; //Список товаров в карзине содержит элемент класса BasketItem
     }
 
+    getSumm() {
+        /*
+        Получение общей стоимости заказа
+        */
+        let result
+        result = 0;
+        this.goods.forEach(good => result += good.price * good.qty);
+        return result;
+    }
+
     addBasketItem(id, title, price) {
         /*
         Добавляем в карзину товар
@@ -96,13 +106,13 @@ class Basket {
         if (inx > -1) {
             //Если товар уже добавляли, то увеличиваем кол-во на 1
             this.goods[inx].qty += 1;
-            console.log("Добавляем кол-во уже добавленного элемент в карзину", this.goods[inx], this.goods)
+            console.log("Добавляем кол-во уже добавленного элемент в карзину", this.goods[inx], this.goods, this.getSumm())
         }
         else {
             let basketItem;
             basketItem = new BasketItem(id, title, price)
             this.goods.push(basketItem); //Добавляем новый элемент в карзину
-            console.log("Добавляем новый элемент в карзину", basketItem, this.goods)
+            console.log("Добавляем новый элемент в карзину", basketItem, this.goods, this.getSumm())
         }
     }
     render() { //Разметка карзины
