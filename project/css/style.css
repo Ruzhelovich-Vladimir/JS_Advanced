@@ -14,7 +14,7 @@ header > .btn-cart {
     font-size: 1em;
 }
 
-.products{
+.goods-list{
     margin-left: 25px;
 }
 
@@ -36,28 +36,35 @@ header > .btn-cart {
     box-shadow: 0 3px rgb(33,147,90) inset;
   }
 
-.product-item {
+.goods-item{
     float: left; 
     width: 170px;
     height: 220px;
     margin-top: 25px;
     margin-right: 25px;
     border: 2px black solid;
-    text-align-last: center;
     font-size: 0.7em;
+    text-align: center;
 }
 
-.product-item > * {
+.goods-item > * {
     margin: 5px;
 }
 
-.product-item > img{
+.title{
+    text-align: left;
+    height: 1em;
+}
+
+.price{
+    text-align: right;
+}
+
+
+.goods-item > img{
     height: 130px;
     width: 150px;
     border: 1px black solid;
-}
-
-.product-item > img {
     margin: 0px;
     margin-top: 10px;
 }
