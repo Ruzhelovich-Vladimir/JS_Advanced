@@ -16,6 +16,23 @@ let getRequest = (url, cb) => {
   xhr.send();
 };
 
+const promiseGetRequest = (url) => {
+  return new Promise((resolve, reject) => {
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status !== 200) {
+          reject('Error');
+        } else {
+          resolve(xhr.responseText);
+        }
+      }
+    };
+    xhr.send();
+  });
+};
+
 // –--------------------------------
 
 class ProductList {
@@ -49,11 +66,16 @@ class ProductList {
   // }
 
   #getProducts() {
-    return fetch(`${API}catalogData.json`)
-      .then(response => response.json())
-      .catch((err) => {
-        console.log(err);
-      });
+    // return fetch(`${API}catalogData.json`)
+    return promiseGetRequest(`${API}catalogData.json`)
+      .then(
+        response => JSON.parse(response)
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   #render() {
@@ -71,7 +93,7 @@ class ProductList {
 
 class ProductItem {
   constructor(product, img = 'https://placehold.it/200x150') {
-    this.title = product.title;
+    this.title = product.product_name;
     this.id = product.id;
     this.price = product.price;
     this.img = img;
