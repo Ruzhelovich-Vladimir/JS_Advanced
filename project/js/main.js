@@ -49,6 +49,10 @@ class ProductList {
         this.#goods = [...data];
         // this.#goods = Array.from(data);
         this.#render();
+      })
+      .then(() => {
+        //Инициализирую карзину, пока не придумал как это сделать вне класса
+        this.basketList = new Basket(this.#goods);
       });
   }
 
@@ -94,7 +98,7 @@ class ProductList {
 class ProductItem {
   constructor(product, img = 'https://placehold.it/200x150') {
     this.title = product.product_name;
-    this.id = product.id;
+    this.id = product.id_product;
     this.price = product.price;
     this.img = img;
   }
@@ -105,9 +109,87 @@ class ProductItem {
                       <div class="desc">
                           <h3>${this.title}</h3>
                           <p>${this.price} \u20bd</p>
-                          <button class="buy-btn">Купить</button>
+                          <button class="buy-btn" data-id="${this.id}">Купить</button>
                       </div>
                   </div>`;
+  }
+}
+
+class BasketItem extends ProductItem { //Наследую класс GoodsItem, чтобы не повторять код
+  /*
+  Класс элемента карзины товара
+  */
+  constructor(product) {
+    super(product); //Вызываю конструктор родителя
+    this.qty = 1; //Добавляю новое свойство класса - количество
+  }
+  render() { //Разметка элемента карзины
+    return ``
+  }
+}
+class Basket {
+  /*
+  Класс карзины товаров
+  */
+  constructor(products) {
+    this.allProducts = products;
+    this.productsList = []; //Список товаров в карзине содержит элемент класса BasketItem
+
+    // Добавляется слушатель события к копкам добавить
+    document.querySelectorAll('.buy-btn').forEach((bottonItem) => bottonItem.addEventListener('click', (event) => {
+      let id, inx;
+      id = +event.target.dataset.id; // Получаем идентификатор из кнопки
+      inx = this.allProducts.findIndex(product => product.id_product == id); // Ищем элемет в структуре json всех продуктов
+      this.addBasketItem(this.allProducts[inx]); //Добавляем в карзину выбранный элемент
+    }
+    ));
+
+    // Добавляется слушатель события к копкам "Карзина"
+    document.querySelector('.basket').addEventListener('click', (event) => {
+      document.querySelector(".list").insertAdjacentHTML('afterbegin', this.render());
+      document.querySelector(".list").innerHTML = this.render();
+    }
+    );
+
+
+  }
+
+  addBasketItem(product) {
+    /*
+    Добавляем в карзину товар
+    */
+    let inx;
+    inx = this.productsList.findIndex(item => item.id == product.id_product); //Ищем элемент массива по id
+    if (inx > -1) {
+      //Если товар уже добавляли, то увеличиваем кол-во на 1
+      this.productsList[inx].qty += 1;
+      console.log("Добавляем кол-во уже добавленного элемент в карзину", this.productsList[inx], this.productsList)
+    }
+    else {
+      let basketItem;
+      basketItem = new BasketItem(product)
+      this.productsList.push(basketItem); //Добавляем новый элемент в карзину
+      console.log("Добавляем новый элемент в карзину", basketItem, this.productsList)
+    }
+  }
+  render() { //Разметка карзины
+
+    let result = "";
+    this.productsList.forEach(elem => {
+      result = `${result}
+    <li>
+    <a href="#" title="${elem.product_name}" class="cart-product-image"><img src="${elem.img}" alt="Product"></a>
+    <div class="text">
+        <p class="product-name">${elem.title}</p>
+        <p class="product-price"><span class="price">${elem.price} \u20bd</span></p>
+        <p class="qty">Кол-во: ${elem.qty}</p>
+    </div>
+    <a class="close" href="#" title="close"><i class="fa fa-times-circle"></i></a>
+    </li>
+    `
+    })
+
+    return result
   }
 }
 
